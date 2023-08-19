@@ -1,0 +1,382 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local slock = true
+
+
+
+local function PlayerDied()
+	local Position = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+	if Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+
+		Players:Chat(":reset")
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Vector3.new(Position)
+	end
+end	
+
+
+
+if Players.LocalPlayer == nil then
+	repeat wait() until Players.LocalPlayer ~= nil
+	wait(2)
+end
+
+
+local function GetPlayerList()
+	local playerList = {}
+	for i, player in ipairs(Players:GetChildren()) do
+		playerList[i] = player.Name
+	end
+	return playerList
+end
+
+local function GetParts()
+	local partsList = {}
+	for i, part in ipairs(workspace:GetChildren()) do
+		if part.Archivable then
+			partsList[i] = part
+		end
+	end
+	return partsList
+end
+
+
+
+local function FindPlayer(abbreviation)
+	if abbreviation:lower() == "me" then
+		return Players.LocalPlayer.Name
+	else
+
+		for _, player in ipairs(Players:GetChildren()) do
+			if (player.Name):sub(1, #abbreviation):lower() == abbreviation:lower() then
+				return player.Name
+			end
+		end
+	end
+end
+
+local Prefix = "-"
+local Prefix2 = Prefix
+local Commands = {
+
+	kick = function(playerTarget)
+		if playerTarget == Players.LocalPlayer.Name then
+			Players:Chat(":npm me You can't kick yourself.")
+		else
+			local command = ":runc kick1 | :free " .. playerTarget .. " | :re " .. playerTarget .. " | :bring " .. playerTarget .. " | :runc kick2"
+			Players:Chat(command)
+			wait(3)
+			if playerTarget ~= nil then
+				game.Players:Chat(":talk me Failed! Try again")
+			end
+		end
+	end,
+
+	mute = function(playerTarget)
+		if playerTarget == Players.LocalPlayer.Name then
+			Players:Chat(":npm me You can't mute yourself.")
+		else
+			local command = ":r6 " .. playerTarget
+			RunService:BindToRenderStep(playerTarget .. ":mute", 1, function()
+				Players:Chat(command)
+				wait(0.00000000001)
+			end)
+		end
+	end,
+
+	unmute = function(playerTarget)
+		if playerTarget == Players.LocalPlayer.Name then
+			Players:Chat(":npm me You can't unmute yourself.")
+		else
+			RunService:UnbindFromRenderStep(playerTarget .. ":mute")
+		end
+	end, 
+	skick = function(playerTarget)
+		Players:Chat(":loadb skick | :f3x")
+		repeat wait() until game.Players.LocalPlayer.Backpack:FindFirstChild("Building Tools")
+		workspace:WaitForChild("SkateboardPlatform")
+		local toGroup = {[1] = workspace:FindFirstChild(playerTarget), [2] = workspace.SkateboardPlatform}
+		local Event = Players.LocalPlayer.Backpack.Folder.SyncAPI.ServerEndpoint
+		Event:InvokeServer("CreateGroup", "Model", workspace, toGroup)
+		Players:Chat(":speed " .. playerTarget .. " 0 | :tp " .. playerTarget .. " wp-skick | :wait 0.5 | :sit " .. playerTarget .. " | :wait 0.1 |:jump " .. playerTarget .. " | :wait 0.1 | :jump " .. playerTarget .. " | :sit " .. playerTarget .. " | :wait 0.1 |:jump " .. playerTarget .. " | :wait 0.1 | :jump " .. playerTarget .. " | :sit " .. playerTarget .. " | :wait 0.1 |:jump " .. playerTarget .. " | :wait 0.1 | :jump " .. playerTarget .. " | :sit " .. playerTarget .. " | :wait 0.1 |:jump " .. playerTarget .. " | :wait 0.1 | :jump " .. playerTarget .. "")
+		wait(3)
+		Players:Chat(":wait 3 | :unloadb skick")
+		if playerTarget ~= nil then
+			game.Players:Chat(":talk me Failed! Try again")
+		end
+	end
+
+
+
+}
+
+Players.LocalPlayer.Chatted:Connect(function(Message)
+	if string.match(Message, Prefix) then
+		local request = Message:split(" ")[1]:split(Prefix)[2]
+		local target = FindPlayer(Message:split(" ")[2])
+		if target == nil then
+			Players:Chat(":npm me The requested player wasn't found.")
+		else
+			if Commands[request] then
+				Commands[request](target)
+			else
+				Players:Chat(":npm me The command '" .. request .. "' doesn't exist.")
+			end
+		end        
+	end
+end)
+
+local function DestroyJail(part)
+	if part:IsA("Model") and part.Name == "LeonStinks126874_ADONISJAIL" then
+		game:GetService("Players"):Chat(":free me")
+	end
+end
+
+local ResetPads = game.Workspace.SecureParts.ResetPads.ClickDetector
+
+function Perm()
+	if ResetPads.MaxActivationDistance == 0 and tpAdminPadEnabled == true then
+		local OriginalPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+		wait(0.3)
+
+		local v = 13.6
+		for i = 1, 9, 1 do
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v, 28.3, 106.4)
+			v = v - 4
+			wait(0.01)
+		end
+
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(OriginalPosition)
+	end
+end
+
+if tpAdminPadEnabled == true then
+	tpAdminPadEnabled = false
+
+else
+	tpAdminPadEnabled = true
+
+
+
+end
+
+
+local antiJail = true
+Players.LocalPlayer.Chatted:Connect(function(Message)
+	---CLRPARTS COMMAND---
+	if Message == Prefix2.."delparts" then
+		game.Players:Chat(":f3x")
+		repeat wait() until game.Players.LocalPlayer.Backpack:FindFirstChild("Building Tools")
+		local Event = Players.LocalPlayer.Backpack.Folder.SyncAPI.ServerEndpoint
+		Event:InvokeServer("Remove", GetParts())
+
+
+	elseif Message == Prefix2.."rj" then
+		local command = "!rejoin"
+		game:GetService("Players"):Chat(command)
+
+	elseif Message == Prefix2.."slock" then
+		if slock == true then
+			slock = false
+			local WhiteListedPlayers = {
+				"BrayanNGG4547",
+				"Karen2638787800",
+				"0lxad",
+				"xuia0",
+				"rolo_cool123"
+			}
+			game:GetService("Players"):Chat(":loadb l3 | :npm me Slock is on!")
+
+
+			local function CheckWhiteList(Player)
+				for i, whitelisted in pairs(WhiteListedPlayers) do
+					if Player.Name ~= whitelisted then
+						game:GetService("Players"):Chat(":npm "..Player.Name.." This server is slocked by HC_LEON | :tp "..Player.Name.." wp-crash | :fov "..Player.Name.." 0") 
+
+
+
+					end
+				end
+			end	
+
+
+
+			game.Players.PlayerAdded:Connect(function(Player)
+				CheckWhiteList(Player)
+			end)
+
+
+		else
+			game:GetService("Players"):Chat(":unloadb l3 | :npm me Slock is off!")
+			slock = true
+		end
+
+
+
+
+
+
+
+
+	elseif Message == Prefix2.."antijail" then
+
+		if antiJail == true then
+			antiJail = false
+			game:GetService("Players"):Chat(":npm me Anti-jail has been enabled!")
+			workspace.ChildAdded:Connect(DestroyJail)
+
+
+
+
+
+
+		end
+	elseif Message == Prefix2.."house" then
+		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 25.3, 82.992)
+
+	elseif Message == Prefix2.."perm" then
+		ResetPads.Changed:Connect(Perm)
+
+	elseif Message == Prefix2.."antipunish" then
+		Players:Chat(":npm me Anti-punish is on!")
+		workspace.ChildRemoved:Connect(function(Model)
+			if Model.Name == Players.LocalPlayer.Name then
+				Players:Chat(":unpunish me")
+			end
+		end)
+
+
+
+
+
+
+
+	elseif Message == Prefix2.."antikill" then
+		Players:Chat(":npm me Anti-kill is on!")
+		while true do
+
+
+			Players.LocalPlayer.Character.Humanoid.Died:Connect(PlayerDied)
+
+
+			wait(2)
+
+		end
+		return
+
+
+	elseif Message == Prefix2.."shutdown" then
+
+		Players:Chat(":m The server shutdown because people were being annoying! | :loadb inscrash")
+
+	elseif Message == Prefix2.."rspy" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+
+
+	elseif Message == Prefix2.."lock" then
+
+
+		for i, player in pairs(game.Players:GetChildren()) do
+			local A_1 = "Remove"
+			local A_2 = {
+
+				[1] = player.Character
+			}
+			local Event = game:GetService("Players").LeonStinks126874.Backpack.Folder.SyncAPI.ServerEndpoint
+			Event:InvokeServer(A_1, A_2)
+			workspace.ChildAdded:Connect(function(model)
+				if model.Name == player.Name then
+					local A_1 = "Remove"
+					local A_2 = {
+
+						[1] = player.Character
+					}
+					local Event = game:GetService("Players").LeonStinks126874.Backpack.Folder.SyncAPI.ServerEndpoint
+					Event:InvokeServer(A_1, A_2)
+				end
+
+			end) 
+		end
+
+	elseif Message == Prefix2.."unlockpad" then
+
+
+		local A_1 = "Remove"
+		local A_2 = {
+
+			[1] = workspace.Terrain.Part
+		}
+		local Event = game:GetService("Players").LeonStinks126874.Backpack.Folder.SyncAPI.ServerEndpoint
+		Event:InvokeServer(A_1, A_2)
+
+	elseif Message == Prefix2.."lockpad" then
+		local BlockPath = workspace.Terrain
+		local Event = game:GetService("Players").LocalPlayer.Backpack.Folder.SyncAPI.ServerEndpoint
+
+		Event:InvokeServer("CreatePart", "Normal", CFrame.new(23, 25, 106), BlockPath)
+
+		local resizeArgs = {
+			[1] = {
+				["Part"] = BlockPath.Part,
+				["CFrame"] = CFrame.new(23, 25, 106),
+				["Size"] = Vector3.new(5.1, 1.7, 5.1)
+			},
+		}
+		Event:InvokeServer("SyncResize", resizeArgs)
+
+		local materialArgs = {
+			[1] = {
+				["Part"] = BlockPath.Part, 
+				["Transparency"] = 0
+			},
+		}
+		Event:InvokeServer("SyncMaterial", materialArgs)
+
+        elseif Message == Prefix.."lockadmin" then
+            local BlockPath = workspace.Terrain
+local Event = game:GetService("Players").LocalPlayer.Backpack.Folder.SyncAPI.ServerEndpoint
+
+Event:InvokeServer("CreatePart", "Normal", CFrame.new(23, 25, 106), BlockPath)
+
+local resizeArgs = {
+    [1] = {
+        ["Part"] = BlockPath.Part,
+        ["CFrame"] = CFrame.new(-2.3, 25.8, 105.99),
+        ["Size"] = Vector3.new(39, 3, 6)
+    },
+}
+Event:InvokeServer("SyncResize", resizeArgs)
+
+local materialArgs = {
+    [1] = {
+        ["Part"] = BlockPath.Part, 
+        ["Transparency"] = 0.5
+    },
+}
+Event:InvokeServer("SyncMaterial", materialArgs)
+
+
+ 
+local A_1 = "SyncMaterial"
+local A_2 = 
+{
+	[1] = 
+{
+	["Part"] = BlockPath.Part, 
+	["Material"] = Enum.Material.Glass
+}
+}
+local Event = game:GetService("Players").LeonStinks126874.Backpack.Folder.SyncAPI.ServerEndpoint
+Event:InvokeServer(A_1, A_2)
+
+end -- Command End
+
+
+
+
+end)
+
+
+
+
+
+print("Running custom commands!")
